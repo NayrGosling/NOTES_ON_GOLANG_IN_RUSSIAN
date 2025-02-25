@@ -60,6 +60,7 @@
     LEFT JOIN — все из левой таблицы + совпадения из правой.
     RIGHT JOIN — все из правой таблицы + совпадения из левой.
     FULL JOIN — все из обеих таблиц.
+    CROSS JOIN — все комбинации.
     Пример: 
       SELECT e.name, d.dept_name FROM employees e INNER JOIN departments d ON e.dept_id = d.id;
 
