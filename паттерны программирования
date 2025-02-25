@@ -224,3 +224,157 @@ func main() {
 Вывод:
 Описание: Простой кофе, с молоком, с сахаром, Цена: 2.80
 Особенности в Go: Go не использует наследование для декораторов, а полагается на композицию через структуры, что делает код более гибким и читаемым.
+______________________________________________________________________________________________
+5. Strategy (Стратегия)
+Описание: Позволяет определять семейство алгоритмов, инкапсулировать каждый из них и делать их взаимозаменяемыми. Клиентский код может выбирать алгоритм во время выполнения без изменения структуры программы.
+
+Пример в Go:
+Предположим, у нас есть система оплаты, где мы можем использовать разные стратегии оплаты (наличные, кредитная карта, PayPal).
+
+package strategy
+import "fmt"
+
+// Интерфейс стратегии
+type PaymentStrategy interface {
+    Pay(amount float64) string
+}
+
+// Конкретная стратегия: Наличные
+type CashPayment struct{}
+
+func (c *CashPayment) Pay(amount float64) string {
+    return fmt.Sprintf("Оплата наличными: %v рублей", amount)
+}
+
+// Конкретная стратегия: Кредитная карта
+type CreditCardPayment struct{}
+
+func (c *CreditCardPayment) Pay(amount float64) string {
+    return fmt.Sprintf("Оплата кредитной картой: %v рублей", amount)
+}
+
+// Контекст, использующий стратегию
+type ShoppingCart struct {
+    paymentStrategy PaymentStrategy
+}
+
+func (s *ShoppingCart) SetPaymentStrategy(strategy PaymentStrategy) {
+    s.paymentStrategy = strategy
+}
+
+func (s *ShoppingCart) Checkout(amount float64) string {
+    if s.paymentStrategy == nil {
+        return "Стратегия оплаты не выбрана"
+    }
+    return s.paymentStrategy.Pay(amount)
+}
+Использование:
+
+package main
+import ("fmt", "strategy")
+
+func main() {
+    cart := &strategy.ShoppingCart{}
+
+    // Оплата наличными
+    cart.SetPaymentStrategy(&strategy.CashPayment{})
+    fmt.Println(cart.Checkout(100.0)) // "Оплата наличными: 100 рублей"
+
+    // Оплата кредитной картой
+    cart.SetPaymentStrategy(&strategy.CreditCardPayment{})
+    fmt.Println(cart.Checkout(200.0)) // "Оплата кредитной картой: 200 рублей"
+}
+Особенности в Go: Strategy реализуется через интерфейс (PaymentStrategy) и структуры, которые реализуют этот интерфейс. Это позволяет легко добавлять новые стратегии без изменения существующего кода.
+______________________________________________________________________________________________
+6. Adapter (Адаптер)
+Описание: Позволяет объектам с несовместимыми интерфейсами работать вместе, адаптируя интерфейс одного объекта под другой.
+
+Пример в Go:
+Предположим, у нас есть старый сервис уведомлений с несовместимым интерфейсом, и мы хотим адаптировать его под новый интерфейс уведомлений.
+
+package adapter
+import "fmt"
+
+// Целевой интерфейс (новый)
+type Notification interface {
+    Send(message string) string
+}
+
+// Адаптируемый класс (старый)
+type OldNotificationService struct{}
+
+func (o *OldNotificationService) Notify(message string) string {
+    return fmt.Sprintf("Старый сервис: %s", message)
+}
+
+// Адаптер
+type NotificationAdapter struct {
+    oldService *OldNotificationService
+}
+
+func (a *NotificationAdapter) Send(message string) string {
+    return a.oldService.Notify(message)
+}
+Использование:
+
+package main
+import ("fmt", "adapter")
+
+func main() {
+    oldService := &adapter.OldNotificationService{}
+    adapter := &adapter.NotificationAdapter{oldService: oldService}
+
+    // Используем адаптер как новый интерфейс Notification
+    notifier := adapter.(adapter.Notification)
+    fmt.Println(notifier.Send("Привет, мир!")) // "Старый сервис: Привет, мир!"
+}
+Особенности в Go: Адаптер реализуется через композицию (встраивание старого сервиса в новую структуру) и реализацию нового интерфейса. Go не требует сложных наследований, что упрощает создание адаптеров.
+______________________________________________________________________________________________
+7. Proxy (Прокси)
+Описание: Предоставляет замену реальному объекту, чтобы контролировать доступ к нему, добавлять дополнительную логику (например, кэширование, ленивую загрузку, безопасность).
+
+Пример в Go:
+Предположим, у нас есть сервис изображений, и мы хотим добавить прокси для кэширования запросов.
+
+package proxy
+import "fmt"
+
+// Реальный объект
+type Image struct {
+    name string
+}
+
+func (i *Image) Display() string {
+    return fmt.Sprintf("Отображение изображения: %s", i.name)
+}
+
+// Прокси
+type ImageProxy struct {
+    realImage *Image
+    name      string
+}
+
+func (p *ImageProxy) Display() string {
+    if p.realImage == nil {
+        p.realImage = &Image{name: p.name}
+        fmt.Println("Загрузка изображения...")
+    }
+    return p.realImage.Display()
+}
+Использование:
+
+package main
+import ("fmt","proxy")
+
+func main() {
+    // Создаём прокси для изображения
+    proxyImage := &proxy.ImageProxy{name: "photo.jpg"}
+
+    // Первый вызов — изображение загружается
+    fmt.Println(proxyImage.Display()) // "Загрузка изображения..." + "Отображение изображения: photo.jpg"
+
+    // Повторный вызов — изображение уже загружено
+    fmt.Println(proxyImage.Display()) // "Отображение изображения: photo.jpg"
+}
+Особенности в Go: Прокси реализуется через композицию, где прокси-объект содержит реальный объект и управляет доступом к нему. 
+Go использует интерфейсы для обеспечения совместимости, но в простых случаях, как в примере, это может быть и структура с прямым вызовом методов.
