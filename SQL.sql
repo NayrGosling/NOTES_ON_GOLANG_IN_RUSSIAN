@@ -1,3 +1,4 @@
+Больше информации - https://sql-academy.org/ru
 Основы SQL
   Что такое SQL?
     Язык для работы с реляционными базами данных (Structured Query Language).
