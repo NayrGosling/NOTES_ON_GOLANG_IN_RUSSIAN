@@ -47,7 +47,53 @@ func CalculateDiscount(price float64, discountType string) float64 {
     return price
 }
 
+func main() {
+    price := 100.0
+    fmt.Println("Fixed discount:", CalculateDiscount(price, "fixed"))
+    fmt.Println("Percentage discount:", CalculateDiscount(price, "percentage"))
+}
+```
+```go
 // Следование принципу: использование интерфейсов
+// Интерфейс для вычисления скидки
+type DiscountStrategy interface {
+    ApplyDiscount(price float64) float64
+}
+
+// Конкретная реализация для фиксированной скидки
+type FixedDiscount struct {
+    Amount float64
+}
+
+func (fd FixedDiscount) ApplyDiscount(price float64) float64 {
+    return price - fd.Amount
+}
+
+// Конкретная реализация для процентной скидки
+type PercentageDiscount struct {
+    Percentage float64
+}
+
+func (pd PercentageDiscount) ApplyDiscount(price float64) float64 {
+    return price * (1 - pd.Percentage/100)
+}
+
+// Функция для применения скидки, принимающая любой тип, реализующий интерфейс DiscountStrategy
+func CalculateDiscount(price float64, strategy DiscountStrategy) float64 {
+    return strategy.ApplyDiscount(price)
+}
+
+func main() {
+    price := 100.0
+
+    // Применение фиксированной скидки
+    fixedDiscount := FixedDiscount{Amount: 10}
+    fmt.Println("Fixed discount:", CalculateDiscount(price, fixedDiscount))
+
+    // Применение процентной скидки
+    percentageDiscount := PercentageDiscount{Percentage: 10}
+    fmt.Println("Percentage discount:", CalculateDiscount(price, percentageDiscount))
+}
 ```
 
 ### L - Liskov Substitution Principle (Принцип подстановки Барбары Лисков)
