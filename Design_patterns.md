@@ -37,9 +37,9 @@ Go — это язык с минималистичным синтаксисом,
 
 ### 1. **Singleton (Одиночка)**
 
-**Назначение:** Гарантирует, что у класса есть только один экземпляр, и предоставляет глобальную точку доступа к нему.
+Назначение: Гарантирует, что у класса есть только один экземпляр, и предоставляет глобальную точку доступа к нему.
 
-**Пример:** Логгер, который должен быть одним для всей системы.
+Пример: Логгер, который должен быть одним для всей системы.
 
 ```go
 package main
@@ -78,14 +78,16 @@ func main() {
 	fmt.Println(logger1 == logger2) // true
 	fmt.Println(logger1.logs)      // [First message Second message]
 }
+```
 Особенности в Go: Используем sync.Once для потокобезоп
 
-### Factory Method (Фабричный метод)
 
-**Назначение:**  
+### 2. **Factory Method (Фабричный метод)**
+
+Назначение:
 Определяет интерфейс для создания объекта, но позволяет подклассам решать, какой класс инстанцировать.
 
-**Пример:**  
+Пример:
 Создание разных типов транспорта.
 
 ```go
@@ -123,5 +125,122 @@ func main() {
 	fmt.Println(car.Drive())  // Car driving
 	fmt.Println(bike.Drive()) // Bike driving
 }
+```
 Особенности в Go:
 Используем функцию вместо метода, так как в Go нет наследования.
+
+### 3. **Abstract Factory (Абстрактная фабрика)**
+
+Назначение:
+Предоставляет интерфейс для создания семейств связанных объектов без указания их конкретных классов.
+
+Пример:
+Фабрика для создания UI-компонентов (кнопки и чекбоксы).
+
+```go
+package main
+
+import "fmt"
+
+type Button interface {
+	Click() string
+}
+
+type Checkbox interface {
+	Check() string
+}
+
+type WinButton struct{}
+func (w *WinButton) Click() string { return "Windows Button clicked" }
+
+type MacButton struct{}
+func (m *MacButton) Click() string { return "Mac Button clicked" }
+
+type WinCheckbox struct{}
+func (w *WinCheckbox) Check() string { return "Windows Checkbox checked" }
+
+type MacCheckbox struct{}
+func (m *MacCheckbox) Check() string { return "Mac Checkbox checked" }
+
+type GUIFactory interface {
+	CreateButton() Button
+	CreateCheckbox() Checkbox
+}
+
+type WinFactory struct{}
+func (w *WinFactory) CreateButton() Button     { return &WinButton{} }
+func (w *WinFactory) CreateCheckbox() Checkbox { return &WinCheckbox{} }
+
+type MacFactory struct{}
+func (m *MacFactory) CreateButton() Button     { return &MacButton{} }
+func (m *MacFactory) CreateCheckbox() Checkbox { return &MacCheckbox{} }
+
+func NewGUIFactory(os string) GUIFactory {
+	if os == "windows" {
+		return &WinFactory{}
+	}
+	return &MacFactory{}
+}
+
+func main() {
+	factory := NewGUIFactory("mac")
+	btn := factory.CreateButton()
+	chk := factory.CreateCheckbox()
+
+	fmt.Println(btn.Click())  // Mac Button clicked
+	fmt.Println(chk.Check()) // Mac Checkbox checked
+}
+```
+### 4. **Builder (Строитель)**
+
+Назначение:
+Отделяет конструирование сложного объекта от его представления.
+
+Пример:
+Постройка дома с разными конфигурациями.
+
+```go
+package main
+
+import "fmt"
+
+type House struct {
+	walls, doors, windows int
+}
+
+type HouseBuilder struct {
+	house *House
+}
+
+func NewHouseBuilder() *HouseBuilder {
+	return &HouseBuilder{house: &House{}}
+}
+
+func (b *HouseBuilder) SetWalls(w int) *HouseBuilder {
+	b.house.walls = w
+	return b
+}
+
+func (b *HouseBuilder) SetDoors(d int) *HouseBuilder {
+	b.house.doors = d
+	return b
+}
+
+func (b *HouseBuilder) SetWindows(w int) *HouseBuilder {
+	b.house.windows = w
+	return b
+}
+
+func (b *HouseBuilder) Build() *House {
+	return b.house
+}
+
+func main() {
+	builder := NewHouseBuilder()
+	house := builder.SetWalls(4).SetDoors(2).SetWindows(6).Build()
+
+	fmt.Printf("House: %d walls, %d doors, %d windows\n", house.walls, house.doors, house.windows)
+}
+```
+Особенности в Go:
+Используем цепочку вызовов для удобства.
