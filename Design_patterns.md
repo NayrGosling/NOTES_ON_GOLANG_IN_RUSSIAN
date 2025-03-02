@@ -244,3 +244,36 @@ func main() {
 ```
 Особенности в Go:
 Используем цепочку вызовов для удобства.
+### 5. Prototype (Прототип)
+
+#### Назначение:
+Создаёт новые объекты путём копирования существующего экземпляра.
+
+#### Пример:
+Клонирование пользователя.
+
+```go
+package main
+
+import "fmt"
+
+type User struct {
+	Name string
+	Age  int
+}
+
+func (u *User) Clone() *User {
+	return &User{Name: u.Name, Age: u.Age}
+}
+
+func main() {
+	user1 := &User{Name: "Alice", Age: 25}
+	user2 := user1.Clone()
+
+	user2.Name = "Bob"
+	fmt.Println(user1) // &{Alice 25}
+	fmt.Println(user2) // &{Bob 25}
+}
+```
+Особенности в Go:
+Простое копирование структуры.
