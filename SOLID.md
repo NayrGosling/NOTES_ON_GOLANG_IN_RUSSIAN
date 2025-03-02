@@ -150,7 +150,6 @@ func main() {
 
 ```go
 // Плохая практика: общий интерфейс заставляет реализовывать ненужные методы
-// Плохая практика: общий интерфейс заставляет реализовывать ненужные методы
 type Worker interface {
 	Work() string
 	Eat() string
@@ -258,6 +257,57 @@ func main() {
     service.GetData()
 }
 ```
+```go
+Следование принципу (использование абстракции):
+go
+Копировать
+Редактировать
+package main
+
+import "fmt"
+
+// Абстракция для базы данных
+type Database interface {
+    Connect()
+}
+
+// Конкретная реализация для MySQL
+type MySQLDatabase struct {}
+
+func (db MySQLDatabase) Connect() {
+    fmt.Println("Подключение к MySQL")
+}
+
+// Конкретная реализация для PostgreSQL
+type PostgreSQLDatabase struct {}
+
+func (db PostgreSQLDatabase) Connect() {
+    fmt.Println("Подключение к PostgreSQL")
+}
+
+// Класс сервис, теперь зависимый от абстракции
+type Service struct {
+    db Database // Зависимость от абстракции, а не конкретной реализации
+}
+
+func (s Service) GetData() {
+    s.db.Connect()
+    fmt.Println("Получение данных")
+}
+
+func main() {
+    // Подключение с использованием MySQL
+    mySQLService := Service{db: MySQLDatabase{}}
+    mySQLService.GetData()
+
+    // Подключение с использованием PostgreSQL
+    postgreSQLService := Service{db: PostgreSQLDatabase{}}
+    postgreSQLService.GetData()
+}
+```
+#### Объяснение:
+- В плохом примере класс Service зависит напрямую от конкретной реализации базы данных MySQLDatabase, что нарушает принцип инверсии зависимостей.
+- В хорошем примере создается абстракция Database, которая определяет метод Connect(). Классы MySQLDatabase и PostgreSQLDatabase реализуют этот интерфейс, а класс Service теперь зависит от абстракции, а не от конкретной реализации. Это позволяет легко заменять реализацию базы данных без изменения кода в классе Service.
 
 ## Заключение
 
