@@ -35,12 +35,9 @@ Go — это язык с минималистичным синтаксисом,
 
 ## 10 популярных шаблонов с примерами на Go
 
-### 1. **Singleton (Одиночка)**
-
+### 1. Singleton (Одиночка)
 Назначение: Гарантирует, что у класса есть только один экземпляр, и предоставляет глобальную точку доступа к нему.
-
 Пример: Логгер, который должен быть одним для всей системы.
-
 ```go
 package main
 
@@ -81,15 +78,9 @@ func main() {
 ```
 Особенности в Go: Используем sync.Once для потокобезоп
 
-
-### 2. **Factory Method (Фабричный метод)**
-
-Назначение:
-Определяет интерфейс для создания объекта, но позволяет подклассам решать, какой класс инстанцировать.
-
-Пример:
-Создание разных типов транспорта.
-
+### 2. Factory Method (Фабричный метод)
+Назначение: Определяет интерфейс для создания объекта, но позволяет подклассам решать, какой класс инстанцировать.
+Пример: Создание разных типов транспорта.
 ```go
 package main
 
@@ -126,17 +117,11 @@ func main() {
 	fmt.Println(bike.Drive()) // Bike driving
 }
 ```
-Особенности в Go:
-Используем функцию вместо метода, так как в Go нет наследования.
+Особенности в Go: Используем функцию вместо метода, так как в Go нет наследования.
 
-### 3. **Abstract Factory (Абстрактная фабрика)**
-
-Назначение:
-Предоставляет интерфейс для создания семейств связанных объектов без указания их конкретных классов.
-
-Пример:
-Фабрика для создания UI-компонентов (кнопки и чекбоксы).
-
+### 3. Abstract Factory (Абстрактная фабрика)
+Назначение: Предоставляет интерфейс для создания семейств связанных объектов без указания их конкретных классов.
+Пример: Фабрика для создания UI-компонентов (кнопки и чекбоксы).
 ```go
 package main
 
@@ -191,14 +176,10 @@ func main() {
 	fmt.Println(chk.Check()) // Mac Checkbox checked
 }
 ```
-### 4. **Builder (Строитель)**
 
-Назначение:
-Отделяет конструирование сложного объекта от его представления.
-
-Пример:
-Постройка дома с разными конфигурациями.
-
+### 4. Builder (Строитель)
+Назначение: Отделяет конструирование сложного объекта от его представления.
+Пример: Постройка дома с разными конфигурациями.
 ```go
 package main
 
@@ -242,16 +223,11 @@ func main() {
 	fmt.Printf("House: %d walls, %d doors, %d windows\n", house.walls, house.doors, house.windows)
 }
 ```
-Особенности в Go:
-Используем цепочку вызовов для удобства.
+Особенности в Go: Используем цепочку вызовов для удобства.
+
 ### 5. Prototype (Прототип)
-
-#### Назначение:
-Создаёт новые объекты путём копирования существующего экземпляра.
-
-#### Пример:
-Клонирование пользователя.
-
+Назначение: Создаёт новые объекты путём копирования существующего экземпляра.
+Пример: Клонирование пользователя.
 ```go
 package main
 
@@ -275,5 +251,220 @@ func main() {
 	fmt.Println(user2) // &{Bob 25}
 }
 ```
-Особенности в Go:
-Простое копирование структуры.
+Особенности в Go: Простое копирование структуры.
+
+### 6. Adapter (Адаптер)
+Назначение: Позволяет объектам с несовместимыми интерфейсами работать вместе.
+Пример: Адаптация старого логгера к новому интерфейсу.
+```go
+package main
+
+import "fmt"
+
+type NewLogger interface {
+	Log(msg string)
+}
+
+type OldLogger struct{}
+
+func (o *OldLogger) WriteLog(msg string) {
+	fmt.Println("Old Log:", msg)
+}
+
+type LoggerAdapter struct {
+	oldLogger *OldLogger
+}
+
+func (a *LoggerAdapter) Log(msg string) {
+	a.oldLogger.WriteLog(msg)
+}
+
+func main() {
+	oldLogger := &OldLogger{}
+	adapter := &LoggerAdapter{oldLogger: oldLogger}
+
+	adapter.Log("Test message") // Old Log: Test message
+}
+```
+
+### 7. Decorator (Декоратор)
+Назначение: Добавляет новое поведение объекту динамически.
+Пример: Добавление логирования к функции.
+```go
+package main
+
+import "fmt"
+
+type Operation func(int) int
+
+func Double(n int) int {
+	return n * 2
+}
+
+func WithLogging(op Operation) Operation {
+	return func(n int) int {
+		fmt.Println("Input:", n)
+		result := op(n)
+		fmt.Println("Output:", result)
+		return result
+	}
+}
+
+func main() {
+	doubleWithLog := WithLogging(Double)
+	result := doubleWithLog(5)
+	fmt.Println("Result:", result)
+}
+```
+Вывод:
+Input: 5
+Output: 10
+Result: 10
+
+### 8. Observer (Наблюдатель)
+Назначение: Определяет зависимость "один-ко-многим" между объектами.
+Пример: Уведомление подписчиков о новом посте.
+```go
+package main
+
+import "fmt"
+
+type Subject struct {
+	observers []Observer
+}
+
+type Observer interface {
+	Update(message string)
+}
+
+type User struct {
+	name string
+}
+
+func (u *User) Update(message string) {
+	fmt.Printf("%s received: %s\n", u.name, message)
+}
+
+func (s *Subject) AddObserver(o Observer) {
+	s.observers = append(s.observers, o)
+}
+
+func (s *Subject) Notify(message string) {
+	for _, o := range s.observers {
+		o.Update(message)
+	}
+}
+
+func main() {
+	subject := &Subject{}
+	user1 := &User{name: "Alice"}
+	user2 := &User{name: "Bob"}
+
+	subject.AddObserver(user1)
+	subject.AddObserver(user2)
+	subject.Notify("New post!")
+}
+```
+Вывод:
+Alice received: New post!
+Bob received: New post!
+
+### 9. Strategy (Стратегия)
+Назначение: Определяет семейство алгоритмов и позволяет менять их на лету.
+Пример: Разные способы оплаты.
+```go
+package main
+
+import "fmt"
+
+type PaymentStrategy interface {
+	Pay(amount int) string
+}
+
+type CreditCard struct{}
+func (c *CreditCard) Pay(amount int) string { return fmt.Sprintf("Paid %d with Credit Card", amount) }
+
+type PayPal struct{}
+func (p *PayPal) Pay(amount int) string { return fmt.Sprintf("Paid %d with PayPal", amount) }
+
+type PaymentContext struct {
+	strategy PaymentStrategy
+}
+
+func (p *PaymentContext) SetStrategy(s PaymentStrategy) {
+	p.strategy = s
+}
+
+func (p *PaymentContext) ExecutePayment(amount int) string {
+	return p.strategy.Pay(amount)
+}
+
+func main() {
+	payment := &PaymentContext{}
+	payment.SetStrategy(&CreditCard{})
+	fmt.Println(payment.ExecutePayment(100))
+
+	payment.SetStrategy(&PayPal{})
+	fmt.Println(payment.ExecutePayment(200))
+}
+```
+
+### 10. Command (Команда)
+Назначение: Инкапсулирует запрос как объект.
+Пример: Управление светом.
+```go
+package main
+
+import "fmt"
+
+type Command interface {
+	Execute()
+}
+
+type Light struct{}
+
+func (l *Light) On()  { fmt.Println("Light is ON") }
+func (l *Light) Off() { fmt.Println("Light is OFF") }
+
+type LightOnCommand struct {
+	light *Light
+}
+
+func (c *LightOnCommand) Execute() {
+	c.light.On()
+}
+
+type LightOffCommand struct {
+	light *Light
+}
+
+func (c *LightOffCommand) Execute() {
+	c.light.Off()
+}
+
+type Remote struct {
+	command Command
+}
+
+func (r *Remote) SetCommand(c Command) {
+	r.command = c
+}
+
+func (r *Remote) PressButton() {
+	r.command.Execute()
+}
+
+func main() {
+	light := &Light{}
+	remote := &Remote{}
+
+	remote.SetCommand(&LightOnCommand{light: light})
+	remote.PressButton()
+
+	remote.SetCommand(&LightOffCommand{light: light})
+	remote.PressButton()
+}
+```
+Вывод:
+Light is ON
+Light is OFF
