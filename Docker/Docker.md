@@ -78,7 +78,7 @@ func main() {
 }
 ```
 
-### 2. Пишем Dockerfile
+### 2. [Пишем Dockerfile](https://github.com/NayrGosling/NOTES_ON_GOLANG_IN_RUSSIAN/blob/main/Docker/Dockerfile.md)
 Создай файл `Dockerfile`:
 ```dockerfile
 # Используем официальный образ Go
@@ -137,7 +137,7 @@ docker images
 
 ---
 
-## Docker Compose: запуск нескольких сервисов
+## [Docker Compose](https://github.com/NayrGosling/NOTES_ON_GOLANG_IN_RUSSIAN/blob/main/Docker/Docker%20Compose.md): запуск нескольких сервисов
 Если у приложения есть база данных, можно использовать **Docker Compose**.
 
 Создадим `docker-compose.yml`:
