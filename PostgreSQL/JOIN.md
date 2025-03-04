@@ -1,8 +1,4 @@
-Вот подробная лекция на русском языке о конструкции `JOIN` в SQL на примере PostgreSQL, оформленная в Markdown. Лекция включает объяснения, примеры и разбор различных типов объединений с пошаговыми пояснениями.
-
----
-
-# Лекция: SQL `JOIN` в PostgreSQL
+# SQL `JOIN` в PostgreSQL
 
 ## Введение
 
@@ -74,7 +70,7 @@ INSERT INTO orders (user_id, amount) VALUES
 
 ### 1. `INNER JOIN`
 `INNER JOIN` возвращает только те строки, где условие объединения выполняется в обеих таблицах.
-INNER JOIN
+#### INNER JOIN
 ![INNER JOIN](./images/right_and_left.png)
 
 #### Пример
@@ -101,10 +97,10 @@ ON u.id = o.user_id;
 
 ### 2. `LEFT JOIN` (или `LEFT OUTER JOIN`)
 `LEFT JOIN` возвращает все строки из левой таблицы (`users`) и соответствующие строки из правой (`orders`). Если совпадений нет, возвращаются значения `NULL` для столбцов правой таблицы.
-LEFT JOIN
+#### LEFT JOIN
 ![LEFT JOIN](./images/left.png)
 
-LEFT OUTER JOIN
+#### LEFT OUTER JOIN
 ![LEFT OUTER JOIN](./images/left_no_right.png)
 
 #### Пример
@@ -132,9 +128,9 @@ ON u.id = o.user_id;
 
 ### 3. `RIGHT JOIN` (или `RIGHT OUTER JOIN`)
 `RIGHT JOIN` противоположен `LEFT JOIN`: возвращает все строки из правой таблицы (`orders`) и соответствующие строки из левой (`users`). Если совпадений нет, возвращаются `NULL` для столбцов левой таблицы.
-RIGHT JOIN
+#### RIGHT JOIN
 ![RIGHT JOIN](./images/right.png) 
-RIGHT OUTER JOIN
+#### RIGHT OUTER JOIN
 ![RIGHT OUTER JOIN](./images/right_no_left.png)
 
 #### Пример
@@ -161,9 +157,9 @@ ON u.id = o.user_id;
 
 ### 4. `FULL JOIN` (или `FULL OUTER JOIN`)
 `FULL JOIN` возвращает все строки из обеих таблиц. Если нет совпадений, заполняет недостающие столбцы значениями `NULL`.
-FULL JOIN
+#### FULL JOIN
 ![FULL JOIN](./images/all.png)
-FULL OUTER JOIN
+#### FULL OUTER JOIN
 ![FULL OUTER JOIN](./images/right_xor_left.png)
 
 #### Пример
@@ -191,6 +187,7 @@ ON u.id = o.user_id;
 
 ### 5. `CROSS JOIN`
 `CROSS JOIN` создаёт декартово произведение: каждую строку из одной таблицы комбинирует с каждой строкой из другой. Условие `ON` не требуется.
+#### CROSS JOIN
 ![CROSS JOIN](./images/CROSS.png)
 
 #### Пример
@@ -293,8 +290,4 @@ INNER JOIN products p ON oi.product_id = p.product_id;
 
 Операция `JOIN` в PostgreSQL — мощный инструмент для работы с реляционными данными. Понимание различий между `INNER`, `LEFT`, `RIGHT`, `FULL` и `CROSS JOIN` позволяет гибко комбинировать таблицы в зависимости от задачи. Освоив базовые примеры и перейдя к сложным запросам с несколькими таблицами, вы сможете эффективно анализировать и обрабатывать данные.
 
-Если у вас есть вопросы или нужен разбор конкретного примера — дайте знать!
-
----
-
-Надеюсь, лекция была полезной! Если нужно что-то дополнить или уточнить, сообщите.
+Больше информации (MySQL) - https://sql-academy.org/ru
